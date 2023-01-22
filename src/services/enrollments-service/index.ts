@@ -4,15 +4,15 @@ import addressRepository, { CreateAddressParams } from "@/repositories/address-r
 import enrollmentRepository, { CreateEnrollmentParams } from "@/repositories/enrollment-repository";
 import { exclude } from "@/utils/prisma-utils";
 import { Address, Enrollment } from "@prisma/client";
-import { ViaCEPAddress } from "@/protocols";
 
 async function getAddressFromCEP(cep: string) {
   const result = await request.get(`https://viacep.com.br/ws/${cep}/json/`);
   if (!result.data || result.data.erro == true) {
     throw notFoundError();
   }
-  return {...exclude(result.data, "ibge", "gia", "ddd", "siafi", "cep", "localidade"), cidade: result.data.localidade
-}
+  return {
+    ...exclude(result.data, "ibge", "gia", "ddd", "siafi", "cep", "localidade"), cidade: result.data.localidade
+  };
 }
 
 async function getOneWithAddressByUserId(userId: number): Promise<GetOneWithAddressByUserIdResult> {
@@ -40,7 +40,6 @@ function getFirstAddress(firstAddress: Address): GetAddressResult {
 type GetAddressResult = Omit<Address, "createdAt" | "updatedAt" | "enrollmentId">;
 
 async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollmentWithAddress) {
-  
   const enrollment = exclude(params, "address");
   const address = getAddressForUpsert(params.address);
   const result = await request.get(`https://viacep.com.br/ws/${params.address.cep}/json/`);

@@ -1,10 +1,7 @@
 import { AuthenticatedRequest } from "@/middlewares";
-import { ViaCEPAddress } from "@/protocols";
 import enrollmentsService from "@/services/enrollments-service";
 import { Response } from "express";
 import httpStatus from "http-status";
-import { exclude } from "@/utils/prisma-utils";
-
 
 export async function getEnrollmentByUser(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
@@ -24,7 +21,6 @@ export async function postCreateOrUpdateEnrollment(req: AuthenticatedRequest, re
       ...req.body,
       userId: req.userId,
     });
-    
 
     return res.sendStatus(httpStatus.OK);
   } catch (error) {
