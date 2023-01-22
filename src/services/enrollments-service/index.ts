@@ -8,7 +8,6 @@ import { ViaCEPAddress } from "@/protocols";
 
 async function getAddressFromCEP(cep: string) {
   const result = await request.get(`https://viacep.com.br/ws/${cep}/json/`);
-  console.log(result.data)
   if (!result.data || result.data.erro == true) {
     throw notFoundError();
   }
@@ -46,7 +45,7 @@ async function createOrUpdateEnrollmentWithAddress(params: CreateOrUpdateEnrollm
   const address = getAddressForUpsert(params.address);
   const result = await request.get(`https://viacep.com.br/ws/${params.address.cep}/json/`);
   if (!result.data || result.data.erro == true) {
-    return "error";
+    throw requestError(400, "CEP inválido");
   }
   //TODO - Verificar se o CEP é válido
   const newEnrollment = await enrollmentRepository.upsert(params.userId, enrollment, exclude(enrollment, "userId"));

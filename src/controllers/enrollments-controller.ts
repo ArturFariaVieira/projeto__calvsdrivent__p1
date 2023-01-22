@@ -20,14 +20,11 @@ export async function getEnrollmentByUser(req: AuthenticatedRequest, res: Respon
 
 export async function postCreateOrUpdateEnrollment(req: AuthenticatedRequest, res: Response) {
   try {
-    let process = await enrollmentsService.createOrUpdateEnrollmentWithAddress({
+    await enrollmentsService.createOrUpdateEnrollmentWithAddress({
       ...req.body,
       userId: req.userId,
     });
-    console.log(process)
-    if(process == "error"){
-      return res.sendStatus(httpStatus.BAD_REQUEST)
-    }
+    
 
     return res.sendStatus(httpStatus.OK);
   } catch (error) {
